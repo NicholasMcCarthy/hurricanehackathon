@@ -1,5 +1,8 @@
 import pandas as pd 
 
+from datetime import datetime
+
+
 def shift_to_next_timestep(data, col, new_col=None, group_col='ID'):
 
     if not new_col:
@@ -34,3 +37,21 @@ def shift_to_next_timestep(data, col, new_col=None, group_col='ID'):
                 continue
 
     return data
+
+
+def add_datetime_variables(data):
+    
+    data['year'], data['month'], data['season'] = zip(*data.date_time.map(parse_dt))
+    
+    return data
+
+def parse_dt(dt_string):
+    dt = datetime.strptime(dt_string, '%m/%d/%Y %H:%M')
+    
+    year = dt.year
+    month = dt.month
+    
+    # {winter:1, spring:2, summer:3, fall:4}
+    season = (month%12 + 3) // 3  
+    
+    return year, month, season
